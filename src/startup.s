@@ -1,3 +1,7 @@
+.syntax unified
+.cpu cortex-m3
+.thumb
+
 @@@ VECTOR TABLE @@@
 .section .isr_vector, "a"
     .word _estack       @ See the linker.ld for this definition. end of pointer stack
@@ -26,6 +30,7 @@
 @@ - copies .data from FLASH to SRAM
 @@ - zeroes out .bss
 @@ - then calls main
+.thumb_func
 .global Reset_Handler
 Reset_Handler:
     @ load the start of initial data (FLASH) and the start and end of where to put it into SRAM
@@ -39,8 +44,10 @@ Reset_Handler:
 @ COPY
 @ Copies 4 bytes from initial .data (FLASH) to .data (SRAM)
 copy_loop:
-    ldr r3, [r0], #4    @ load  4bytes of what's in sidata into r3, then increment r0 by 4
-    str r3, [r1], #4    @ write 4bytes of what's in r3 into sdata, then increment r1 by 4
+    ldr r3, [r0]        @ read from source pointer (FLASH)
+    adds r0, #4     @ increment src pointer by 4 bytes
+    str r3, [r1]        @ write to destination pointer (SRAM)
+    adds r1, #4     @ increment destination pointer
 copy_check:
     cmp r1, r2          @ compare start of data and end of data
     blt copy_loop       @ if start < end, loop
@@ -52,7 +59,8 @@ copy_check:
     mov r2, #0          @ fill r2 with 0
     b   bss_check
 bss_loop:
-    str r2, [r0], #4    @ put r2 (=#0) into r0, then increment by 4 bytes
+    str r2, [r0]        @ write zero to SRAM ptr
+    adds r0, #4     @ increment ram ptr
 bss_check:
     cmp r0, r1 
     blt bss_loop
@@ -62,5 +70,7 @@ bss_check:
     b main
 
 @ When main is done just hang instead of going off into memory
+.thumb_func
+.global hang
 hang:
     b hang

@@ -19,3 +19,14 @@ xxd out/main.bin                        # read output bin
 ```
 
 It's in little endian but you should be able to see the stack pointer and addr for Reset_Handler
+
+## OpenOCD
+
+Flash the chip by running:
+```bash
+openocd \
+    -f interface/stlink.cfg \
+    -f target/stm32f1x.cfg \
+    -c "set CPUTAPID 0x2ba01477" \ # needed for my chip
+    -c "program out/output.elf verify reset exit"
+```

@@ -11,8 +11,7 @@ _estack = ORIGIN(SRAM) + LENGTH(SRAM);
 
 SECTIONS 
 {
-    .text 
-a:
+    .text :
     {
         /* VECTOR TABLE MUST BE FIRST. Putting it first means it lands right at 0x08000000 */
         /* KEEP tells the linker to keep this in even if no symbols are referenced which is the case for vector table */
