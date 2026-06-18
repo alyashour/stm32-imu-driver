@@ -22,7 +22,7 @@ It's in little endian but you should be able to see the stack pointer and addr f
 
 ## OpenOCD
 
-Flash the chip by running:
+Flash the chip with a program in `out/output.elf` by running:
 ```bash
 openocd \
     -f interface/stlink.cfg \
